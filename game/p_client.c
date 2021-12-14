@@ -621,7 +621,6 @@ void InitClientPersistant (gclient_t *client)
 	memset (&client->pers, 0, sizeof(client->pers));
 
 	item = FindItem("Blaster");
-	//item = FindItem("chaingun");
 	client->pers.selected_item = ITEM_INDEX(item);
 	client->pers.inventory[client->pers.selected_item] = 1;
 
@@ -1405,15 +1404,122 @@ void ClientBegin (edict_t *ent)
 			class3marker->s.origin[2] = 473;
 			SP_item_health_mega(class3marker);
 			gitem_t* it;
-			//for (int i = 0; i < game.num_items; i++)
-			//{
-			//	it = itemlist + i;
-			//	if (!it->pickup)
-			//		continue;
-		//		if (!(it->flags & IT_WEAPON))
-		//			continue;
-		//		ent->client->pers.inventory[i] += 1;
-		//	}
+		
+			gitem_t* item;
+
+			if (ent->client->pers.current_class &&  ent->client->pers.level < 5)
+			{
+				
+
+				item = FindItem("Blaster");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("Shotgun");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("Super Shotgun");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("Machinegun");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 0;
+				
+
+				item = FindItem("Grenade Launcher");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+				
+
+				item = FindItem("Rocket Launcher");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 0;
+				
+
+				item = FindItem("HyperBlaster");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("Railgun");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("BFG10K");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 0;
+				
+
+				item = FindItem("Chaingun");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+				
+
+			}
+			else if (ent->client->pers.current_class && ent->client->pers.level >= 5)
+			{
+				item = FindItem("Blaster");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("Shotgun");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("Super Shotgun");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("Machinegun");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("Grenade Launcher");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("Rocket Launcher");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("HyperBlaster");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("Railgun");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("BFG10K");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+
+				item = FindItem("Chaingun");
+				ent->client->pers.selected_item = ITEM_INDEX(item);
+				ent->client->pers.inventory[ent->client->pers.selected_item] = 1;
+				
+				
+			}
+		
+
+
 			for (int i = 0; i < game.num_items; i++)
 			{
 				it = itemlist + i;
@@ -1429,7 +1535,7 @@ void ClientBegin (edict_t *ent)
 			item1marker->s.origin[0] = 1470;
 			item1marker->s.origin[1] = 800;
 			item1marker->s.origin[2] = 473;
-			SP_item_health_mega(item1marker);
+			SP_item_health_small(item1marker);
 
 
 			edict_t* item2marker;
@@ -1437,14 +1543,14 @@ void ClientBegin (edict_t *ent)
 			item2marker->s.origin[0] = 1470;
 			item2marker->s.origin[1] = 864;
 			item2marker->s.origin[2] = 473;
-			SP_item_health_mega(item2marker);
+			SP_item_health_small(item2marker);
 
 			edict_t* item3marker;
 			item3marker = G_Spawn();
 			item3marker->s.origin[0] = 1470;
 			item3marker->s.origin[1] = 929;
 			item3marker->s.origin[2] = 473;
-			SP_item_health_mega(item3marker);
+			SP_item_health_small(item3marker);
 
 			if (ent->client->pers.current_class && strcmp(ent->client->pers.current_class, "fire_mage") == 0)
 			{
@@ -2031,7 +2137,8 @@ void ClientBeginServerFrame (edict_t *ent)
 		client->pers.experience = 0;
 		if (client->pers.level == 5)
 		{
-			//level 5 stuff
+		
+
 		}
 		else if (client->pers.level % 2 == 0)
 		{

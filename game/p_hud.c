@@ -318,14 +318,30 @@ void HelpComputer (edict_t *ent)
 	// send the layout
 
 	Com_sprintf(string, sizeof(string),
-		"xv 202 yv 12 string2 \"%s\" ",		// skill
+		"xv 100 yv 10 string2 \"%s\" "
+		"xv 0 yv 20 string2 \"%s\" "	
+		"xv -50 yv 30 string2 \"%s\" "
+		"xv -200 yv 40 string2 \"%s\" "
+		"xv -300 yv 50 string2 \"%s\" "
+		"xv -50 yv 60 string2 \"%s\" "
+		"xv -200 yv 70 string2 \"%s\" "
+		"xv 100 yv 80 string2 \"%s\" ",
+
 		
-		"This is my temporary Help Menu")
-		;
+		"Welcome!",
+		"You've just arrived in the hub world.",
+		"Here you can select your class, buy items, and enter dungeons.",
+		"The three mega health packs (from left to right) are fire mage, ice mage, and gravity mage.",
+		"The small health packs to your right are items (from left to right) Blood Veil, Quick Charge, and Free Spell Chance.",
+		"The green portals are entrances to dungeons.",
+		"You'll unlock health and mana upgrades every level, and your ultimate spells at level 5.",
+		"Enjoy!"
+		);
 
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);
 	gi.unicast (ent, true);
+	//\nEnjoy!
 }
 
 
