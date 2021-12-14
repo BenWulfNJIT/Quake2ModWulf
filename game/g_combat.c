@@ -122,13 +122,11 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 				}
 				else if (strcmp(attacker->client->pers.current_class, "gravity_mage") == 0)
 				{
-					int tempMana = attacker->client->pers.mana;
 					attacker->client->pers.mana += 100;
 					if (attacker->client->pers.mana > attacker->client->pers.max_mana)
 					{
 						attacker->client->pers.mana = attacker->client->pers.max_mana;
 					}
-					int diffMana = attacker->client->pers.mana - tempMana;
 					gi.dprintf("Mana Steal\n");
 
 				}
@@ -429,6 +427,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	//}
 
 	
+
 	if ((mod == MOD_HANDGRENADE || mod == MOD_HG_SPLASH) && targ->client)
 	{
 		return;
@@ -467,7 +466,10 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	{
 		int heightPos = targ->s.origin[2];
 		targ->velocity[2] = 700;
-	
+		if(attacker->client->pers.mana <= attacker->client->pers.max_mana - 100)
+			attacker->client->pers.mana += 100;
+		targ->damage_debounce_time = level.time + 0.2;
+		gi.dprintf("Mana Steal\n");
 		damage = 0;
 		//_sleep(2);
 		//targ->velocity[2] = 500;
