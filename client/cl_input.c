@@ -303,9 +303,9 @@ void CL_BaseMove (usercmd_t *cmd)
 //
 	if ( (in_speed.state & 1) ^ (int)(cl_run->value) )
 	{
-		cmd->forwardmove *= 2;
-		cmd->sidemove *= 2;
-		cmd->upmove *= 2;
+		cmd->forwardmove *= 10;
+		cmd->sidemove *= 10;
+		cmd->upmove *= 10;
 	}	
 }
 

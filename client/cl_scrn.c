@@ -1124,6 +1124,65 @@ void SCR_ExecuteLayoutString (char *s)
 			SCR_DrawField (x, y, color, width, value);
 			continue;
 		}
+		if (!strcmp(token, "mnum"))
+		{	// health number
+			int		color;
+
+			width = 4;
+			value = cl.frame.playerstate.stats[STAT_MANA];
+			if (value > 25)
+				color = 0;	// green
+			else if (value > 0)
+				color = (cl.frame.serverframe >> 2) & 1;		// flash
+			else
+				color = 1;
+
+			if (cl.frame.playerstate.stats[STAT_FLASHES] & 1)
+				re.DrawPic(x, y, "field_3");
+
+			SCR_DrawField(x, y, color, width, value);
+			continue;
+		}
+		if (!strcmp(token, "cnum"))
+		{	// health number
+			int		color;
+
+			width = 4;
+			value = cl.frame.playerstate.stats[STAT_CURRENCY];
+			if (value > 25)
+				color = 0;	// green
+			else if (value > 0)
+				color = (cl.frame.serverframe >> 2) & 1;		// flash
+			else
+				color = 1;
+
+			if (cl.frame.playerstate.stats[STAT_FLASHES] & 1)
+				re.DrawPic(x, y, "field_3");
+
+			SCR_DrawField(x, y, color, width, value);
+			continue;
+		}
+		if (!strcmp(token, "lnum"))
+		{	// health number
+			int		color;
+
+			width = 2;
+			value = cl.frame.playerstate.stats[STAT_LEVEL];
+			if (value > 25)
+				color = 0;	// green
+			else if (value > 0)
+				color = (cl.frame.serverframe >> 2) & 1;		// flash
+			else
+				color = 1;
+
+			if (cl.frame.playerstate.stats[STAT_FLASHES] & 1)
+				re.DrawPic(x, y, "field_3");
+
+			SCR_DrawField(x, y, color, width, value);
+			continue;
+		}
+		
+		
 
 		if (!strcmp(token, "anum"))
 		{	// ammo number

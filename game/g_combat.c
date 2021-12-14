@@ -102,6 +102,40 @@ void Killed (edict_t *targ, edict_t *inflictor, edict_t *attacker, int damage, v
 		if (!(targ->monsterinfo.aiflags & AI_GOOD_GUY))
 		{
 			level.killed_monsters++;
+			//gi.dprintf("?!!??!?!?\n");
+			//attacker->client->resp.currency += 50;
+			if (attacker->client) {
+				//attacker->client->pers.currency += 50;
+				if (strcmp(attacker->client->pers.current_class, "fire_mage") == 0)
+				{
+					//attacker->client->pers.health += 10;
+					int tempHealth = attacker->health;
+					attacker->health += 10;
+					if (attacker->health > 150)
+					{
+						attacker->health = 150;
+					}
+					int diffHealth = attacker->health - tempHealth;
+					gi.dprintf("Lifesteal\n");
+
+
+				}
+				else if (strcmp(attacker->client->pers.current_class, "gravity_mage") == 0)
+				{
+					int tempMana = attacker->client->pers.mana;
+					attacker->client->pers.mana += 100;
+					if (attacker->client->pers.mana > attacker->client->pers.max_mana)
+					{
+						attacker->client->pers.mana = attacker->client->pers.max_mana;
+					}
+					int diffMana = attacker->client->pers.mana - tempMana;
+					gi.dprintf("Mana Steal\n");
+
+				}
+				//printf("Currency: %i", attacker->client->resp.currency);
+				//gi.dprintf("resp.Currency: %i\n", attacker->client->resp.currency);
+				gi.dprintf("+$50\n");
+			}
 			if (coop->value && attacker->client)
 				attacker->client->resp.score++;
 			// medics won't heal monsters that they kill themselves
@@ -137,7 +171,7 @@ void SpawnDamage (int type, vec3_t origin, vec3_t normal, int damage)
 		damage = 255;
 	gi.WriteByte (svc_temp_entity);
 	gi.WriteByte (type);
-//	gi.WriteByte (damage);
+//	gi.WriteByte (damage);TE_FLAME
 	gi.WritePosition (origin);
 	gi.WriteDir (normal);
 	gi.multicast (origin, MULTICAST_PVS);
@@ -374,6 +408,10 @@ qboolean CheckTeamDamage (edict_t *targ, edict_t *attacker)
 	return false;
 }
 
+void SetFire(edict_t *target)
+{
+	//target->onFire = true;
+}
 void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir, vec3_t point, vec3_t normal, int damage, int knockback, int dflags, int mod)
 {
 	gclient_t	*client;
@@ -382,10 +420,72 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 	int			asave;
 	int			psave;
 	int			te_sparks;
-
+	
 	if (!targ->takedamage)
 		return;
+	//if (targ != client && attacker != client)
+	//{
+	//	return;
+	//}
 
+	
+	if ((mod == MOD_HANDGRENADE || mod == MOD_HG_SPLASH) && targ->client)
+	{
+		return;
+	}
+	if ((mod == MOD_HANDGRENADE || mod == MOD_HG_SPLASH) && !targ->client)
+	{
+		if (random() > 0.2)
+		{
+			damage = 0;
+		}
+			gi.dprintf("hit a guy for %i damage\n", damage);
+			gi.dprintf("Enemy health: %i\n", targ->health);
+			attacker->health += damage;
+		
+	}
+	
+	
+	if (mod == MOD_R_SPLASH && targ->client)
+	{
+		return;
+	}
+	if (!targ->client && !targ->buried && (mod == MOD_GRENADE || mod == MOD_G_SPLASH))
+	{
+		targ->s.origin[2] -= 20;
+		targ->buried = true;
+		targ->nextthink += 10;
+	}
+	if (mod == MOD_SHOTGUN && !targ->client)
+	{
+		if (random() >= 0.5)
+		{
+			targ->onFire = true;
+		}
+	}
+	if (mod == MOD_HYPERBLASTER)
+	{
+		int heightPos = targ->s.origin[2];
+		targ->velocity[2] = 700;
+	
+		damage = 0;
+		//_sleep(2);
+		//targ->velocity[2] = 500;
+
+		//targ->velocity[2] = -500;
+		
+
+		//targ->moveinfo.
+		//client->ps.pmove.gravity = sv_gravity->value / 2.5;
+	}
+
+	if (mod == MOD_RAILGUN && attacker->client && attacker->client->pers.current_class && strcmp(attacker->client->pers.current_class, "fire_mage") == 0)
+	{
+		targ->onFire = true;
+	}
+	
+	
+	
 	// friendly fire avoidance
 	// if enabled you can't hurt teammates (but you can hurt yourself)
 	// knockback still occurs
@@ -411,6 +511,60 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 
 	client = targ->client;
 
+	if (mod == MOD_BLASTER && client == NULL && attacker->client && attacker->client->pers.current_class && strcmp(attacker->client->pers.current_class, "ice_mage") == 0)
+	{
+		if ( random() >= 0.2) {
+			//gi.dprintf("Freeze Test\n");
+			targ->nextthink += 5;
+		
+		}
+		if (targ->health <= 0)
+		{
+			targ->health = -40;
+		}
+
+	}
+	if (mod == MOD_SSHOTGUN && !targ->client && targ->monsterinfo.scale >= 0.2)
+	{
+		if(random() > 0.5)
+			targ->monsterinfo.scale -= 0.05;
+	}
+	//gi.dprintf("class = %s\n", client->pers.current_class);
+	if (mod == MOD_LAVA && targ->client && strcmp(client->pers.current_class, "fire_mage") == 0 && targ->velocity[2] > 0)
+	{
+		targ->velocity[2] = 300;
+		return;
+	}
+	if (mod == MOD_LAVA && targ->client && strcmp(client->pers.current_class, "fire_mage") == 0)
+	{
+		return;
+	}
+
+	if (client && strcmp(client->pers.current_class, "gravity_mage") == 0)
+	{
+		if (random() >= 0.5) {
+			gi.dprintf("Damage Avoided\n");
+			return;
+		}
+	}
+	if (client && strcmp(client->pers.current_class, "ice_mage") == 0)
+	{
+		if (random() >= 0.5) {
+			
+		
+		attacker->health -= 5;
+		if (attacker->health <= 0)
+		{
+			attacker->health = 1;
+		}
+			gi.dprintf("Reflected Damage\n");
+
+
+
+
+			return;
+		}
+	}
 	if (dflags & DAMAGE_BULLET)
 		te_sparks = TE_BULLET_SPARKS;
 	else
@@ -457,7 +611,7 @@ void T_Damage (edict_t *targ, edict_t *inflictor, edict_t *attacker, vec3_t dir,
 		save = damage;
 		SpawnDamage (te_sparks, point, normal, save);
 	}
-
+	
 	// check for invincibility
 	if ((client && client->invincible_framenum > level.framenum ) && !(dflags & DAMAGE_NO_PROTECTION))
 	{
@@ -563,14 +717,27 @@ void T_RadiusDamage (edict_t *inflictor, edict_t *attacker, float damage, edict_
 		VectorSubtract (inflictor->s.origin, v, v);
 		points = damage - 0.5 * VectorLength (v);
 		if (ent == attacker)
-			points = points * 0.5;
+			points = points * 0.1;
 		if (points > 0)
 		{
 			if (CanDamage (ent, inflictor))
 			{
+				//ent->gravity = -0.2;
+				//ent->monsterinfo.aiflags &= AI_DUCKED;
+				//ent->monsterinfo.aiflags |= AI_HOLD_FRAME;
+				
+				//ent->nextthink += 5;
 				VectorSubtract (ent->s.origin, inflictor->s.origin, dir);
-				T_Damage (ent, inflictor, attacker, dir, inflictor->s.origin, vec3_origin, (int)points, (int)points, DAMAGE_RADIUS, mod);
-			}
+				if (mod == MOD_R_SPLASH)
+				{
+					T_Damage(ent, inflictor, attacker, dir, inflictor->s.origin, vec3_origin, 500, 500, DAMAGE_RADIUS, mod);
+
+				}
+				else
+				{
+					T_Damage(ent, inflictor, attacker, dir, inflictor->s.origin, vec3_origin, 2, 0, DAMAGE_RADIUS, mod);
+				}
+				}
 		}
 	}
 }

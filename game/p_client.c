@@ -19,6 +19,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 #include "g_local.h"
 #include "m_player.h"
+//#include "g_cmds.c"
+
 
 void ClientUserinfoChanged (edict_t *ent, char *userinfo);
 
@@ -608,16 +610,29 @@ void InitClientPersistant (gclient_t *client)
 {
 	gitem_t		*item;
 
+	const* temp_class;
+	//strcpy(temp_class, client->pers.current_class);
+	//int temp_max_health = client->pers.;
+	
+
+	int temp_currency = client->pers.currency;
+	
+	
 	memset (&client->pers, 0, sizeof(client->pers));
 
 	item = FindItem("Blaster");
+	//item = FindItem("chaingun");
 	client->pers.selected_item = ITEM_INDEX(item);
 	client->pers.inventory[client->pers.selected_item] = 1;
 
 	client->pers.weapon = item;
 
-	client->pers.health			= 100;
-	client->pers.max_health		= 100;
+	client->pers.health			= 69;
+	client->pers.max_health		= 69;
+
+	client->pers.currency = temp_currency;
+//	client->pers.current_class = temp_class;
+	//strcat(client->pers.current_class, temp_class);
 
 	client->pers.max_bullets	= 200;
 	client->pers.max_shells		= 100;
@@ -625,6 +640,8 @@ void InitClientPersistant (gclient_t *client)
 	client->pers.max_grenades	= 50;
 	client->pers.max_cells		= 200;
 	client->pers.max_slugs		= 50;
+	//client->pers.currency = client->pers.currency;
+	//client->pers.current_class = client->pers.current_class;
 
 	client->pers.connected = true;
 }
@@ -632,6 +649,7 @@ void InitClientPersistant (gclient_t *client)
 
 void InitClientResp (gclient_t *client)
 {
+	//gi.dprintf("class inside initresp? %s\n", client->pers.current_class);
 	memset (&client->resp, 0, sizeof(client->resp));
 	client->resp.enterframe = level.framenum;
 	client->resp.coop_respawn = client->pers;
@@ -670,6 +688,7 @@ void FetchClientEntData (edict_t *ent)
 	ent->health = ent->client->pers.health;
 	ent->max_health = ent->client->pers.max_health;
 	ent->flags |= ent->client->pers.savedFlags;
+	
 	if (coop->value)
 		ent->client->resp.score = ent->client->pers.score;
 }
@@ -1104,7 +1123,7 @@ void PutClientInServer (edict_t *ent)
 	int		i;
 	client_persistant_t	saved;
 	client_respawn_t	resp;
-
+	//gi.dprintf("INSIDE PUTCLIENTINSERVER?? %s\n", ent->client->pers.current_class);
 	// find a spawn point
 	// do it before setting health back up, so farthest
 	// ranging doesn't count this client
@@ -1149,6 +1168,7 @@ void PutClientInServer (edict_t *ent)
 	}
 
 	// clear everything but the persistant data
+	//gi.dprintf("man idk: %s\n", ent->client->pers.current_class);
 	saved = client->pers;
 	memset (client, 0, sizeof(*client));
 	client->pers = saved;
@@ -1304,7 +1324,14 @@ void ClientBegin (edict_t *ent)
 		ClientBeginDeathmatch (ent);
 		return;
 	}
+	if (ent->client->pers.level == 0)
+	{
+		ent->client->pers.level = 1;
+		ent->client->pers.healthGain = 0;
+		ent->client->pers.manaGain = 0;
 
+	}
+		ent->client->pers.oldKillCount = level.killed_monsters;
 	// if there is already a body waiting for us (a loadgame), just
 	// take it, otherwise spawn one from scratch
 	if (ent->inuse == true)
@@ -1325,6 +1352,215 @@ void ClientBegin (edict_t *ent)
 		ent->classname = "player";
 		InitClientResp (ent->client);
 		PutClientInServer (ent);
+		if (ent->client->pers.max_mana)
+		{
+			ent->client->pers.mana = ent->client->pers.max_mana;
+		}
+		else 
+		{
+			ent->client->pers.mana = 1000;
+
+		}
+		if (ent->client)
+		{
+			ent->client->pers.iceStorm = false;
+		}
+		
+		//gi.dprintf("Mana: %i\n", ent->client->pers.mana);
+		edict_t* ent1;
+		edict_t* ent2;
+		edict_t* ent3;
+		edict_t* ent4;
+
+		edict_t* ent5;
+		edict_t* ent6;
+		edict_t* ent7;
+
+		edict_t* ent8;
+		edict_t* ent9;
+		edict_t* ent10;
+		edict_t* ent11;
+
+		if (strcmp(level.mapname, "q2dm1") == 0)
+		{
+		
+			edict_t* class1marker;
+			class1marker = G_Spawn();
+			class1marker->s.origin[0] = 1375;
+			class1marker->s.origin[1] = 480;
+			class1marker->s.origin[2] = 473;
+			SP_item_health_mega(class1marker);
+
+			edict_t* class2marker;
+			class2marker = G_Spawn();
+			class2marker->s.origin[0] = 1313;
+			class2marker->s.origin[1] = 480;
+			class2marker->s.origin[2] = 473;
+			SP_item_health_mega(class2marker);
+
+			edict_t* class3marker;
+			class3marker = G_Spawn();
+			class3marker->s.origin[0] = 1251;
+			class3marker->s.origin[1] = 480;
+			class3marker->s.origin[2] = 473;
+			SP_item_health_mega(class3marker);
+			gitem_t* it;
+			//for (int i = 0; i < game.num_items; i++)
+			//{
+			//	it = itemlist + i;
+			//	if (!it->pickup)
+			//		continue;
+		//		if (!(it->flags & IT_WEAPON))
+		//			continue;
+		//		ent->client->pers.inventory[i] += 1;
+		//	}
+			for (int i = 0; i < game.num_items; i++)
+			{
+				it = itemlist + i;
+				if (!it->pickup)
+					continue;
+				if (!(it->flags & IT_AMMO))
+					continue;
+				Add_Ammo(ent, it, 1000);
+			}
+
+			edict_t* item1marker;
+			item1marker = G_Spawn();
+			item1marker->s.origin[0] = 1470;
+			item1marker->s.origin[1] = 800;
+			item1marker->s.origin[2] = 473;
+			SP_item_health_mega(item1marker);
+
+
+			edict_t* item2marker;
+			item2marker = G_Spawn();
+			item2marker->s.origin[0] = 1470;
+			item2marker->s.origin[1] = 864;
+			item2marker->s.origin[2] = 473;
+			SP_item_health_mega(item2marker);
+
+			edict_t* item3marker;
+			item3marker = G_Spawn();
+			item3marker->s.origin[0] = 1470;
+			item3marker->s.origin[1] = 929;
+			item3marker->s.origin[2] = 473;
+			SP_item_health_mega(item3marker);
+
+			if (ent->client->pers.current_class && strcmp(ent->client->pers.current_class, "fire_mage") == 0)
+			{
+				G_FreeEdict(class1marker);
+			}
+			if (ent->client->pers.current_class && strcmp(ent->client->pers.current_class, "ice_mage") == 0)
+			{
+				G_FreeEdict(class2marker);
+			}
+			if (ent->client->pers.current_class && strcmp(ent->client->pers.current_class, "gravity_mage") == 0)
+			{
+				G_FreeEdict(class3marker);
+			}
+			if (ent->client->pers.freeSpell)
+			{
+				G_FreeEdict(item1marker);
+			}
+			if (ent->client->pers.quickCharge)
+			{
+				G_FreeEdict(item2marker);
+			}
+			if (ent->client->pers.bloodVeil)
+			{
+				G_FreeEdict(item3marker);
+			}
+		}
+		if (strcmp(level.mapname, "q2dm5") == 0)
+		{
+			//gi.dprintf("coords: [%i][%i][%i]", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+			
+			if (level.killed_monsters == 0)
+			{
+				ent1 = G_Spawn();
+				ent1->s.origin[0] = 25.5;
+				ent1->s.origin[1] = 500.75;
+				ent1->s.origin[2] = 189.75;
+
+				ent2 = G_Spawn();
+				ent2->s.origin[0] = 135;
+				ent2->s.origin[1] = 511;
+				ent2->s.origin[2] = 189.75;
+
+				ent3 = G_Spawn();
+				ent3->s.origin[0] = -67;
+				ent3->s.origin[1] = 528;
+				ent3->s.origin[2] = 189.75;
+
+				ent4 = G_Spawn();
+				ent4->s.origin[0] = 317;
+				ent4->s.origin[1] = 723;
+				ent4->s.origin[2] = 189.75;
+
+				SP_monster_chick(ent1);
+				SP_monster_chick(ent2);
+				SP_monster_chick(ent3);
+				SP_monster_chick(ent4);
+			}
+		}
+		if (strcmp(level.mapname, "q2dm6") == 0)
+		{
+			ent->s.origin[0] = 81;
+			ent->s.origin[1] = 982;
+			ent->s.origin[2] = 56;
+			
+			ent5 = G_Spawn();
+			ent5->s.origin[0] = 424;
+			ent5->s.origin[1] = 1477;
+			ent5->s.origin[2] = -151;
+
+
+			ent6 = G_Spawn();
+			ent6->s.origin[0] = 936;
+			ent6->s.origin[1] = 1489;
+			ent6->s.origin[2] = -185;
+
+			ent7 = G_Spawn();
+			ent7->s.origin[0] = 949;
+			ent7->s.origin[1] = 1137;
+			ent7->s.origin[2] = -129;
+
+			SP_monster_soldier_light(ent5);
+			SP_monster_soldier_light(ent6);
+			SP_monster_infantry(ent7);
+		}
+		if (strcmp(level.mapname, "q2dm8") == 0)
+		{
+			ent->s.origin[0] = -1197;
+			ent->s.origin[1] = 967;
+			ent->s.origin[2] = -450;
+
+			ent8 = G_Spawn();
+			ent8->s.origin[0] = -737;
+			ent8->s.origin[1] = 1363;
+			ent8->s.origin[2] = -459;
+
+			ent9 = G_Spawn();
+			ent9->s.origin[0] = -202;
+			ent9->s.origin[1] = 1329;
+			ent9->s.origin[2] = -452;
+
+			ent10 = G_Spawn();
+			ent10->s.origin[0] = 228;
+			ent10->s.origin[1] = 1158;
+			ent10->s.origin[2] = -448;
+
+			ent11 = G_Spawn();
+			ent11->s.origin[0] = 184;
+			ent11->s.origin[1] = 1311;
+			ent11->s.origin[2] = -463;
+
+
+			SP_monster_soldier(ent8);
+			SP_monster_soldier(ent9);
+			SP_monster_soldier(ent10);
+			SP_monster_infantry(ent11);
+		}
 	}
 
 	if (level.intermissiontime)
@@ -1574,9 +1810,16 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 	int		i, j;
 	pmove_t	pm;
 
+	//ent->client->pers.bloodVeil = true;
+	//if (true) gi.dprintf("Testing\n");
+
 	level.current_entity = ent;
 	client = ent->client;
 
+	if (client->pers.bloodVeil && level.time - (int)level.time == 0)
+	{
+		fire_grenade2(ent, ent->s.origin, ent->s.angles, 50, 0, 0, 0, false);
+	}
 	if (level.intermissiontime)
 	{
 		client->ps.pmove.pm_type = PM_FREEZE;
@@ -1609,7 +1852,18 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 		else
 			client->ps.pmove.pm_type = PM_NORMAL;
 
-		client->ps.pmove.gravity = sv_gravity->value;
+		if (strcmp(client->pers.current_class, "gravity_mage") == 0)
+		{
+			client->ps.pmove.gravity = sv_gravity->value / 2.5;
+
+		}
+		else
+		{
+			client->ps.pmove.gravity = sv_gravity->value;
+
+		}
+
+
 		pm.s = client->ps.pmove;
 
 		for (i=0 ; i<3 ; i++)
@@ -1654,7 +1908,7 @@ void ClientThink (edict_t *ent, usercmd_t *ucmd)
 			gi.sound(ent, CHAN_VOICE, gi.soundindex("*jump1.wav"), 1, ATTN_NORM, 0);
 			PlayerNoise(ent, ent->s.origin, PNOISE_SELF);
 		}
-
+		//ih
 		ent->viewheight = pm.viewheight;
 		ent->waterlevel = pm.waterlevel;
 		ent->watertype = pm.watertype;
@@ -1756,12 +2010,323 @@ void ClientBeginServerFrame (edict_t *ent)
 {
 	gclient_t	*client;
 	int			buttonMask;
-
+	char	string[1024];
 	if (level.intermissiontime)
 		return;
-
+	
 	client = ent->client;
 
+	//if (true) gi.dprintf("Testing\n");
+
+	if (level.killed_monsters != client->pers.oldKillCount)
+	{
+
+		client->pers.currency += (level.killed_monsters - client->pers.oldKillCount)*50;
+		client->pers.oldKillCount = level.killed_monsters;
+		client->pers.experience += 50;
+	}
+	if (client->pers.experience >= 100)
+	{
+		client->pers.level++;
+		client->pers.experience = 0;
+		if (client->pers.level == 5)
+		{
+			//level 5 stuff
+		}
+		else if (client->pers.level % 2 == 0)
+		{
+			client->pers.manaGain += 200;
+			ent->max_health = 150 + (client->pers.healthGain);
+			ent->client->pers.max_health = 150 + (client->pers.healthGain);
+			ent->client->pers.class_health_bonus = 50;
+			ent->health = ent->max_health;
+			ent->client->pers.max_mana = 1000 + (client->pers.manaGain);
+		}
+		else
+		{
+			client->pers.healthGain += 50;
+			ent->max_health = 150 + (client->pers.healthGain);
+			ent->client->pers.max_health = 150 + (client->pers.healthGain);
+			ent->client->pers.class_health_bonus = 50;
+			ent->health = ent->max_health;
+			ent->client->pers.max_mana = 1000 + (client->pers.manaGain);
+		}
+
+	}
+
+	if (client->pers.current_class && strcmp(client->pers.current_class, "ice_mage") == 0)
+	{
+		//gi.dprintf("Time = %f\n", level.time - (int)level.time);
+		if (((level.time - (int)level.time) == 0) && client->pers.mana < client->pers.max_mana)
+		{
+			client->pers.mana += 10;
+			gi.dprintf("+10 Mana\n");
+			
+		}
+	}
+	if (client->pers.current_class && strcmp(client->pers.current_class, "ice_mage") == 0 && client->pers.iceStorm && client->pers.mana > 5)
+	{
+		vec3_t iceRainAngle;
+		iceRainAngle[0] = 0;
+		iceRainAngle[1] = 0.2;
+		iceRainAngle[2] = -0.99;
+
+		vec3_t iceRainPos;
+		//gi.dprintf("%f\n", crandom());
+		iceRainPos[0] = ent->s.origin[0] + crandom() * 400;
+		iceRainPos[1] = ent->s.origin[1] + crandom() * 400;
+		iceRainPos[2] = ent->s.origin[2] + 100;
+		vec3_t iceRainPos2;
+		//gi.dprintf("%f\n", crandom());
+		iceRainPos2[0] = ent->s.origin[0] + crandom() * 400;
+		iceRainPos2[1] = ent->s.origin[1] + crandom() * 400;
+		iceRainPos2[2] = ent->s.origin[2] + 200;
+		vec3_t iceRainPos3;
+		//gi.dprintf("%f\n", crandom());
+		iceRainPos3[0] = ent->s.origin[0] + crandom() * 400;
+		iceRainPos3[1] = ent->s.origin[1] + crandom() * 400;
+		iceRainPos3[2] = ent->s.origin[2] + 200;
+
+		vec3_t iceRainPos4;
+		//gi.dprintf("%f\n", crandom());
+		iceRainPos4[0] = ent->s.origin[0] + crandom() * 400;
+		iceRainPos4[1] = ent->s.origin[1] + crandom() * 400;
+		iceRainPos4[2] = ent->s.origin[2] + 200;
+
+		fire_blaster(ent, iceRainPos, iceRainAngle, 12, 500, NULL, false);
+		client->pers.mana--;
+
+		fire_blaster(ent, iceRainPos2, iceRainAngle, 12, 500, NULL, false);
+		client->pers.mana--;
+
+		fire_blaster(ent, iceRainPos3, iceRainAngle, 12, 500, NULL, false);
+		client->pers.mana--;
+
+		fire_blaster(ent, iceRainPos4, iceRainAngle, 12, 500, NULL, false);
+
+		client->pers.mana--;
+	}
+	else if (client->pers.current_class && strcmp(client->pers.current_class, "ice_mage") == 0 && client->pers.iceStorm && client->pers.mana <= 5)
+	{
+		client->pers.iceStorm = false;
+	}
+	//Q2DM1 HUB TRACKING AND BLOCKING
+	if (strcmp(level.mapname, "q2dm1") == 0)
+	{
+		vec3_t portal1;
+		portal1[0] = 1378;
+		portal1[1] = 1082;
+		portal1[2] = 920;
+
+		vec3_t portal2;
+		portal2[0] = 1315;
+		portal2[1] = 1024;
+		portal2[2] = 364;
+
+		vec3_t portal3;
+		portal3[0] = 1227;
+		portal3[1] = 238;
+		portal3[2] = 536;
+		//SpawnDamage(TE_SPARKS, portal1, portal1, 0);
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_BFG_EXPLOSION);
+		gi.WritePosition(portal1);
+		gi.multicast(portal1, MULTICAST_PHS);
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_BFG_EXPLOSION);
+		gi.WritePosition(portal2);
+		gi.multicast(portal1, MULTICAST_PHS);
+		gi.WriteByte(svc_temp_entity);
+		gi.WriteByte(TE_BFG_EXPLOSION);
+		gi.WritePosition(portal3);
+		gi.multicast(portal1, MULTICAST_PHS);
+
+		
+		if (ent->s.origin[2] > 900 && ent->client->pers.current_class && (strcmp(ent->client->pers.current_class, "fire_mage") == 0 || strcmp(ent->client->pers.current_class, "gravity_mage") == 0 || strcmp(ent->client->pers.current_class, "ice_mage") == 0))
+		{
+			BeginIntermission(CreateTargetChangeLevel("q2dm6"));
+		}
+		if (ent->s.origin[2] < 360 && ent->client->pers.current_class && (strcmp(ent->client->pers.current_class, "fire_mage") == 0 || strcmp(ent->client->pers.current_class, "gravity_mage") == 0 || strcmp(ent->client->pers.current_class, "ice_mage") == 0))
+		{
+			BeginIntermission(CreateTargetChangeLevel("q2dm5"));
+		}
+		if (ent->s.origin[0] > 1230 && ent->s.origin[1] < 285 && ent->client->pers.current_class && (strcmp(ent->client->pers.current_class, "fire_mage") == 0 || strcmp(ent->client->pers.current_class, "gravity_mage") == 0 || strcmp(ent->client->pers.current_class, "ice_mage") == 0))
+		{
+			BeginIntermission(CreateTargetChangeLevel("q2dm8"));
+		}
+		if ((ent->s.origin[0] > 1344 && ent->s.origin[0] < 1406) && (ent->s.origin[1] > 450 && ent->s.origin[1] < 511) && (ent->s.origin[2] > 470 && ent->s.origin[2] < 474) && ent->client->pers.current_class && strcmp(ent->client->pers.current_class, "fire_mage") != 0)
+		{
+			//Set Class stuff here
+			//still need to set weapons
+			gi.cprintf(ent, PRINT_HIGH, "Setting to Fire Mage\n");
+			
+			memset(ent->client->pers.current_class, 0, 16);
+			strcat(ent->client->pers.current_class, "fire_mage");
+			ent->max_health = 150 + (client->pers.healthGain);
+			ent->client->pers.max_health = 150 + (client->pers.healthGain);
+			ent->client->pers.class_health_bonus = 50;
+			ent->health = ent->max_health;
+			ent->client->pers.max_mana = 1000 + (client->pers.manaGain);
+			BeginIntermission(CreateTargetChangeLevel("q2dm1"));
+
+		}
+		if ((ent->s.origin[0] > 1282 && ent->s.origin[0] < 1344) && (ent->s.origin[1] > 450 && ent->s.origin[1] < 511) && (ent->s.origin[2] > 470 && ent->s.origin[2] < 474))
+		{
+			gi.cprintf(ent, PRINT_HIGH, "Setting to Ice Mage\n");
+			memset(ent->client->pers.current_class, 0, 16);
+			strcat(ent->client->pers.current_class, "ice_mage");
+			ent->max_health = 100 + (client->pers.healthGain);
+			ent->client->pers.max_health = 100 + (client->pers.healthGain);
+			ent->health = ent->max_health;
+			ent->client->pers.max_mana = 1200 + (client->pers.manaGain);
+			BeginIntermission(CreateTargetChangeLevel("q2dm1"));
+
+		}
+		if ((ent->s.origin[0] > 1220 && ent->s.origin[0] < 1282) && (ent->s.origin[1] > 450 && ent->s.origin[1] < 511) && (ent->s.origin[2] > 470 && ent->s.origin[2] < 474))
+		{
+			gi.cprintf(ent, PRINT_HIGH, "Setting to Gravity Mage\n");
+			memset(ent->client->pers.current_class, 0, 16);
+			strcat(ent->client->pers.current_class, "gravity_mage");
+			ent->max_health = 100 + (client->pers.healthGain);
+			ent->client->pers.max_health = 100 + (client->pers.healthGain);
+			ent->health = ent->max_health;
+			ent->client->pers.max_mana = 1000 + (client->pers.manaGain);
+			BeginIntermission(CreateTargetChangeLevel("q2dm1"));
+
+		}
+		if ((ent->s.origin[0] > 1407 && ent->s.origin[0] < 1470) && (ent->s.origin[1] > 768 && ent->s.origin[1] < 831) && (ent->s.origin[2] > 470 && ent->s.origin[2] < 474) && !ent->client->pers.freeSpell)
+		{
+			//gi.dprintf("Item 1\n");
+			if (ent->client->pers.currency < 100)
+			{
+				ent->s.origin[0] = 1400;
+				gi.dprintf("Not enough money\n");
+			}
+			else if (ent->client->pers.currency >= 100)
+			{
+				gi.dprintf("Item Purchased: Free Spell Chance\n");
+				ent->client->pers.freeSpell = true;
+				ent->client->pers.currency -= 100;
+				ent->s.origin[0] = 1390;
+
+			}
+		}
+		else if ((ent->s.origin[0] > 1407 && ent->s.origin[0] < 1470) && (ent->s.origin[1] > 768 && ent->s.origin[1] < 831) && (ent->s.origin[2] > 470 && ent->s.origin[2] < 474) && ent->client->pers.freeSpell)
+		{
+			ent->s.origin[0] = 1400;
+			gi.dprintf("You already have this item\n");
+
+		}
+		if ((ent->s.origin[0] > 1407 && ent->s.origin[0] < 1470) && (ent->s.origin[1] > 831 && ent->s.origin[1] < 897) && (ent->s.origin[2] > 470 && ent->s.origin[2] < 474) && !ent->client->pers.quickCharge)
+		{
+			//gi.dprintf("Item 2\n");
+			if (ent->client->pers.currency < 100)
+			{
+				ent->s.origin[0] = 1400;
+				gi.dprintf("Not enough money\n");
+			}
+			else if (ent->client->pers.currency >= 100)
+			{
+				gi.dprintf("Item Purchased: Quick Charge\n");
+				ent->client->pers.quickCharge = true;
+				ent->client->pers.currency -= 100;
+				ent->s.origin[0] = 1390;
+
+			}
+			
+		}
+		else if ((ent->s.origin[0] > 1407 && ent->s.origin[0] < 1470) && (ent->s.origin[1] > 831 && ent->s.origin[1] < 897) && (ent->s.origin[2] > 470 && ent->s.origin[2] < 474) && ent->client->pers.quickCharge)
+		{
+			ent->s.origin[0] = 1400;
+			gi.dprintf("You already have this item\n");
+
+		}
+		if ((ent->s.origin[0] > 1407 && ent->s.origin[0] < 1470) && (ent->s.origin[1] > 897 && ent->s.origin[1] < 960) && (ent->s.origin[2] > 470 && ent->s.origin[2] < 474) && !ent->client->pers.bloodVeil)
+		{
+			//gi.dprintf("Item 2\n");
+			if (ent->client->pers.currency < 100)
+			{
+				ent->s.origin[0] = 1400;
+				gi.dprintf("Not enough money\n");
+			}
+			else if (ent->client->pers.currency >= 100)
+			{
+				gi.dprintf("Item Purchased: bloodVeil\n");
+				ent->client->pers.bloodVeil = true;
+				ent->client->pers.currency -= 100;
+				ent->s.origin[0] = 1390;
+
+			}
+
+		}
+		else if ((ent->s.origin[0] > 1407 && ent->s.origin[0] < 1470) && (ent->s.origin[1] > 897 && ent->s.origin[1] < 960) && (ent->s.origin[2] > 470 && ent->s.origin[2] < 474) && ent->client->pers.bloodVeil)
+		{
+			ent->s.origin[0] = 1400;
+			gi.dprintf("You already have this item\n");
+
+		}
+		
+	}
+	//Q2DM5 MONSTER TRACKING AND BLOCKING
+	if (strcmp(level.mapname, "q2dm5") == 0)
+	{
+		if (ent->s.origin[1] < 300 && level.killed_monsters != 0 && level.killed_monsters == 4)
+		{
+			level.killed_monsters = 0;
+			BeginIntermission(CreateTargetChangeLevel("q2dm1"));
+		}
+		if (ent->s.origin[1] < 300 && (level.killed_monsters == 0 || level.killed_monsters  != 4))
+		{
+			ent->s.origin[1] = 300;
+		}
+	}
+	if (deathmatch->value &&
+		client->pers.spectator != client->resp.spectator &&
+		(level.time - client->respawn_time) >= 5) {
+		spectator_respawn(ent);
+		return;
+	}
+
+	//Q2DM6 MONSTER TRACKING AND BLOCKING
+	if (strcmp(level.mapname, "q2dm6") == 0)
+	{
+
+
+		if (ent->s.origin[0] > 1200 && level.killed_monsters != 0 && level.killed_monsters  == 3)
+		{
+			level.killed_monsters = 0;
+			BeginIntermission(CreateTargetChangeLevel("q2dm1"));
+		}
+		if (ent->s.origin[0] > 1200 && (level.killed_monsters == 0 || level.killed_monsters != 3))
+		{
+			ent->s.origin[0] = 1200;
+		}
+		if (ent->s.origin[0] < -300)
+		{
+			ent->s.origin[0] = -300;
+		}
+	}
+
+	//Q2DM8 MONSTER TRACKING AND BLOCKING
+	if (strcmp(level.mapname, "q2dm8") == 0)
+	{
+
+		if (ent->s.origin[0] > -100 && ent->s.origin[1] < 950 && level.killed_monsters != 0 && level.killed_monsters == 4)
+		{
+			level.killed_monsters = 0;
+			BeginIntermission(CreateTargetChangeLevel("q2dm1"));
+		}
+		if (ent->s.origin[0] > -100 && ent->s.origin[1] < 950 && (level.killed_monsters == 0 || level.killed_monsters != 4))
+		{
+			ent->s.origin[1] = 950;
+		}
+		if (ent->s.origin[1] < 700 && ent->s.origin[0] < -1000)
+		{
+			ent->s.origin[1] = 700;
+		}
+		
+		
+	}
 	if (deathmatch->value &&
 		client->pers.spectator != client->resp.spectator &&
 		(level.time - client->respawn_time) >= 5) {

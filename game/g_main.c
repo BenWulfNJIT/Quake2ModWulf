@@ -190,6 +190,9 @@ void ClientEndServerFrames (void)
 
 }
 
+
+//WULF
+
 /*
 =================
 CreateTargetChangeLevel
@@ -355,9 +358,11 @@ void G_RunFrame (void)
 	int		i;
 	edict_t	*ent;
 
+	
 	level.framenum++;
 	level.time = level.framenum*FRAMETIME;
 
+	
 	// choose a client for monsters to target this frame
 	AI_SetSightClient ();
 

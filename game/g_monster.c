@@ -274,7 +274,7 @@ void M_WorldEffects (edict_t *ent)
 		if (ent->damage_debounce_time < level.time)
 		{
 			ent->damage_debounce_time = level.time + 0.2;
-			T_Damage (ent, world, world, vec3_origin, ent->s.origin, vec3_origin, 10*ent->waterlevel, 0, 0, MOD_LAVA);
+				T_Damage(ent, world, world, vec3_origin, ent->s.origin, vec3_origin, 10 * ent->waterlevel, 0, 0, MOD_LAVA);
 		}
 	}
 	if ((ent->watertype & CONTENTS_SLIME) && !(ent->flags & FL_IMMUNE_SLIME))
@@ -343,6 +343,7 @@ void M_SetEffects (edict_t *ent)
 	if (ent->health <= 0)
 		return;
 
+	
 	if (ent->powerarmor_time > level.time)
 	{
 		if (ent->monsterinfo.power_armor_type == POWER_ARMOR_SCREEN)
@@ -424,9 +425,51 @@ void monster_think (edict_t *self)
 		self->monsterinfo.linkcount = self->linkcount;
 		M_CheckGround (self);
 	}
+	
+	if (self->onFire && level.time - (int)level.time == 0)
+	{
+		//gi.dprintf("Dealing 1 damage\n");
+		T_Damage(self, world, world, vec3_origin, self->s.origin, vec3_origin, 2, 0, 0, MOD_CRUSH);
+		//gi.WriteByte(svc_temp_entity);
+		//gi.WriteByte(TE_FLAME);
+		//	gi.WriteByte (damage);TE_FLAME
+		//gi.WritePosition(self->s.origin);
+		//gi.WriteDir(self->s.angles);
+		//gi.multicast(self->s.origin, MULTICAST_PVS);TE_EXPLOSION1
+		//SpawnDamage(TE_SPARKS, self->s.origin, self->s.origin, 0);
+		vec3_t location;
+		location[0] = self->s.origin[0];
+		location[1] = self->s.origin[1];
+		location[2] = self->s.origin[2]+20;
+
+
+		for(int i=0; i<20; i++)
+			SpawnDamage(TE_SPARKS, location, self->s.origin, 0);
+		
+
+
+	}
+
+	if (self->velocity[2] > 300)
+	{
+		self->jumped = true;
+		//self->gravity = 20;
+	}
+	if (self->jumped == true && self->velocity[2] < 0)
+	{
+		//gi.dprintf("Do Damage?\nFall speed = %f\n", self->velocity[2]);
+		//T_Damage(self, world, world, )
+		self->velocity[2] = -1000;
+		
+	}
+	if (self->jumped == true && self->velocity[2] == 0)
+	{
+		T_Damage(self, world, world, vec3_origin, self->s.origin, vec3_origin, 20, 0, 0, MOD_CRUSH);
+	}
 	M_CatagorizePosition (self);
 	M_WorldEffects (self);
 	M_SetEffects (self);
+	
 }
 
 

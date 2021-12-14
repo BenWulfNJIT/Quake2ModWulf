@@ -509,7 +509,7 @@ void P_FallingDamage (edict_t *ent)
 
 	if (ent->movetype == MOVETYPE_NOCLIP)
 		return;
-
+	
 	if ((ent->client->oldvelocity[2] < 0) && (ent->velocity[2] > ent->client->oldvelocity[2]) && (!ent->groundentity))
 	{
 		delta = ent->client->oldvelocity[2];
@@ -722,6 +722,8 @@ void P_WorldEffects (void)
 
 			if (envirosuit)	// take 1/3 damage with envirosuit
 				T_Damage (current_player, world, world, vec3_origin, current_player->s.origin, vec3_origin, 1*waterlevel, 0, 0, MOD_LAVA);
+			//else if(fireproof)
+				//T_Damage(current_player, world, world, vec3_origin, current_player->s.origin, vec3_origin, 0 * waterlevel, 0, 0, MOD_LAVA);
 			else
 				T_Damage (current_player, world, world, vec3_origin, current_player->s.origin, vec3_origin, 3*waterlevel, 0, 0, MOD_LAVA);
 		}

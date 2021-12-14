@@ -69,6 +69,7 @@ void AI_SetSightClient (void)
 			&& !(ent->flags & FL_NOTARGET) )
 		{
 			level.sight_client = ent;
+		
 			return;		// got one
 		}
 		if (check == start)

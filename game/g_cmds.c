@@ -899,6 +899,155 @@ void Cmd_PlayerList_f(edict_t *ent)
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
 
+/*
+=================
+SetClass -- WULF
+=================
+*/
+void SetClass(edict_t* ent, char* force_class)
+{
+	const* class_to_set;
+	if (sizeof(gi.args()) == 0)
+	{
+		class_to_set = force_class;
+	}
+	else 
+	{
+		class_to_set = gi.args();
+	}
+	
+	
+	if (Q_stricmp(class_to_set, "fire_mage") == 0)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Setting to Fire Mage\n");	
+		memset(ent->client->pers.current_class, 0, 16);
+		strcat(ent->client->pers.current_class, class_to_set); 
+		ent->max_health = 150;
+		ent->client->pers.max_health = 150;
+		ent->client->pers.class_health_bonus = 50;
+		ent->health = ent->max_health;
+		ent->client->pers.max_mana = 1000;
+
+	}
+	else if (Q_stricmp(class_to_set, "ice_mage") == 0)
+	{
+		
+
+
+
+
+		gi.cprintf(ent, PRINT_HIGH, "Setting to Ice Mage\n");
+
+
+
+
+		memset(ent->client->pers.current_class, 0, 16);
+		strcat(ent->client->pers.current_class, class_to_set);
+		ent->max_health = 100;
+		ent->client->pers.max_health = 100;
+		ent->health = ent->max_health;
+		ent->client->pers.max_mana = 1200;
+
+
+	}
+	else if (Q_stricmp(class_to_set, "gravity_mage") == 0)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Setting to Gravity Mage\n");
+		memset(ent->client->pers.current_class, 0, 16);
+		strcat(ent->client->pers.current_class, class_to_set);
+		ent->max_health = 100;
+		ent->client->pers.max_health = 150;
+		ent->health = ent->max_health;
+		ent->client->pers.max_mana = 1000;
+
+
+	}
+	else
+	{
+		gi.cprintf(ent, PRINT_HIGH, "Invalid Class Name\n");
+	}
+	gi.cprintf(ent, PRINT_HIGH, "Succesfully set to: ");
+	gi.cprintf(ent, PRINT_HIGH, ent->client->pers.current_class);
+	gi.cprintf(ent, PRINT_HIGH, "\n");
+
+
+
+
+
+}
+
+/*
+=================
+PrintClass -- WULF
+=================
+*/
+void PrintClass(edict_t* ent)
+{
+	if (ent->client->pers.current_class != NULL) {
+		//gi.cprintf(ent, PRINT_HIGH, ent->client->pers.current_class);
+
+		if (Q_stricmp(ent->client->pers.current_class, "fire_mage") == 0)
+		{
+			gi.cprintf(ent, PRINT_HIGH, "Current Class: Fire Mage\n");
+		}
+		else if (Q_stricmp(ent->client->pers.current_class, "ice_mage") == 0)
+		{
+			gi.cprintf(ent, PRINT_HIGH, "Current Class: Ice Mage\n");
+		}
+		else if (Q_stricmp(ent->client->pers.current_class, "gravity_mage") == 0)
+		{
+			gi.cprintf(ent, PRINT_HIGH, "Current Class: Gravity Mage\n");
+		}
+		else
+		{
+			gi.cprintf(ent, PRINT_HIGH, "Current Class: ");
+			gi.cprintf(ent, PRINT_HIGH, ent->client->pers.current_class);
+			gi.cprintf(ent, PRINT_HIGH, "\n");
+
+
+
+		}
+	}
+}
+
+
+/*
+=================
+GoTo -- WULF
+=================
+*/
+void Cmd_GoTo_f(edict_t* ent)
+{
+	edict_t* ent1;
+	//edict_t* ent;
+	//char* nextmap = "q2dm2";
+	const* nextmap = gi.args();
+	char* s, * t, * f;
+	static const char* seps = " ,\n\r";
+	BeginIntermission(CreateTargetChangeLevel(nextmap));
+
+	//gi.dprintf("am i here");
+	
+		
+	//ent = G_Spawn();
+	//ent->classname = "target_changelevel";
+	//Com_sprintf(level.nextmap, sizeof(level.nextmap), "%s", map);
+	//ent->map = level.nextmap;
+	//return ent;
+
+
+
+}
+
+void Cmd_Where_f(edict_t* ent)
+{
+	gi.dprintf("Coords: [%f] [%f] [%f]\n", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2]);
+	//gi.dprintf("Coords: [%i] [%i] [%i]\n", ent->move_origin, ent->move_origin[1], ent->move_origin[2]);
+	//gi.dprintf("Coords: [%i] [%i] [%i]\n", ent->absmax[0], ent->absmax[1], ent->absmax[2]);
+	//ent->moveinfo.
+
+	
+}
 
 /*
 =================
@@ -987,6 +1136,14 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+	else if (Q_stricmp(cmd, "class") == 0)
+		SetClass(ent, NULL);
+	else if (Q_stricmp(cmd, "goto") == 0)
+		Cmd_GoTo_f(ent);
+	else if (Q_stricmp(cmd, "where") == 0)
+		Cmd_Where_f(ent);
+	else if (Q_stricmp(cmd, "currentclass") == 0)
+		PrintClass(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }

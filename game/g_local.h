@@ -839,6 +839,7 @@ typedef struct
 	// values saved and restored from edicts when changing levels
 	int			health;
 	int			max_health;
+	int			class_health_bonus;
 	int			savedFlags;
 
 	int			selected_item;
@@ -862,6 +863,32 @@ typedef struct
 	int			helpchanged;
 
 	qboolean	spectator;			// client is a spectator
+
+	//Wulf
+	char		current_class[16];
+	int			mana;
+	int			max_mana;
+	qboolean	hasManaBoost;
+
+	int			healthGain;
+	int			manaGain;
+	//level system
+	int			experience;
+	int			level;
+	qboolean	needLevelUp;
+
+
+	//items
+	qboolean	freeSpell;
+	qboolean	quickCharge;
+	qboolean	bloodVeil;
+
+	int			currency;
+	int			oldKillCount;
+
+	int			mage_health_trait;
+	qboolean    iceStorm;
+
 } client_persistant_t;
 
 // client data that stays across deathmatch respawns
@@ -870,6 +897,7 @@ typedef struct
 	client_persistant_t	coop_respawn;	// what to set client->pers to on a respawn
 	int			enterframe;			// level.framenum the client entered the game
 	int			score;				// frags, etc
+
 	vec3_t		cmd_angles;			// angles sent over in the last command
 
 	qboolean	spectator;			// client is a spectator
@@ -1020,6 +1048,8 @@ struct edict_s
 	char		*combattarget;
 	edict_t		*target_ent;
 
+	qboolean	onFire;
+	qboolean	buried;
 	float		speed, accel, decel;
 	vec3_t		movedir;
 	vec3_t		pos1, pos2;
@@ -1053,9 +1083,13 @@ struct edict_s
 
 	int			health;
 	int			max_health;
+	int			mage_health_trait;
+	int			launchedHeight;
 	int			gib_health;
 	int			deadflag;
+	qboolean	jumped;
 	qboolean	show_hostile;
+	//qboolean	onFire;
 
 	float		powerarmor_time;
 
